@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lo que la API no hace — Spartan IT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFAF7;
+  --surface: #FFFFFF;
+  --surface-elevated: #F4F2EB;
+  --text-primary: #1A1A1A;
+  --text-secondary: #595955;
+  --text-muted: #8C8C87;
+  --border: #E8E6DE;
+  --border-strong: #D6D3C7;
+  --accent: #2D4A3E;
+  --accent-soft: #E8EFEB;
+  --status-tenes: #2D6A4F;
+  --status-tenes-bg: #E8F0EA;
+  --status-progreso: #9A6B0F;
+  --status-progreso-bg: #F5ECD7;
+  --status-gap: #9A3324;
+  --status-gap-bg: #F3E0DC;
+  --status-noaplica: #6B6B66;
+  --status-noaplica-bg: #ECEAE3;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Top bar */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(250, 250, 247, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 0.5px solid var(--border);
+  z-index: 100;
+  padding: 0.875rem 2rem;
+}
+.topbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.brand {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+.brand-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+.topbar-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-feature-settings: "tnum";
+}
+
+/* Layout */
+.layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 3rem;
+  padding: 0 2rem;
+}
+
+.sidebar {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding: 2rem 0;
+  font-size: 13.5px;
+}
+.sidebar-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin: 1.5rem 0 0.5rem;
+}
+.sidebar-label:first-child { margin-top: 0; }
+.sidebar a {
+  display: block;
+  padding: 0.35rem 0;
+  color: var(--text-secondary);
+  text-decoration: none;
+  line-height: 1.45;
+  transition: color 0.15s;
+}
+.sidebar a:hover { color: var(--text-primary); }
+.sidebar a.active { color: var(--accent); font-weight: 500; }
+.sidebar-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-right: 6px;
+}
+
+/* Main content */
+.content {
+  padding: 3rem 0 6rem;
+  max-width: 760px;
+}
+
+/* Hero */
+.hero {
+  margin-bottom: 4rem;
+}
+.hero-eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.5rem;
+  font-variation-settings: "opsz" 96;
+}
+.hero h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent);
+}
+.hero-lead {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 620px;
+}
+.hero-lead p { margin: 0 0 1rem; }
+.hero-meta {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 0.5px solid var(--border);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.hero-meta div span {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+/* Status counters */
+.counters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 3rem 0 4rem;
+}
+.counter {
+  padding: 1.25rem 1.25rem 1rem;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+}
+.counter-num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1;
+  font-variation-settings: "opsz" 72;
+}
+.counter-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+.counter.tenes .counter-num { color: var(--status-tenes); }
+.counter.progreso .counter-num { color: var(--status-progreso); }
+.counter.gap .counter-num { color: var(--status-gap); }
+.counter.noaplica .counter-num { color: var(--status-noaplica); }
+
+/* Sections */
+.section {
+  margin: 5rem 0;
+  scroll-margin-top: 80px;
+}
+.section-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 0.5px solid var(--border-strong);
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+.section h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.75rem;
+  font-variation-settings: "opsz" 72;
+}
+.section-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Item matrix */
+.matrix {
+  display: flex;
+  gap: 4px;
+  margin: 1.5rem 0 2rem;
+  flex-wrap: wrap;
+}
+.matrix-cell {
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  border: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.matrix-cell:hover { transform: scale(1.15); }
+.matrix-cell.tenes { background: var(--status-tenes-bg); color: var(--status-tenes); }
+.matrix-cell.progreso { background: var(--status-progreso-bg); color: var(--status-progreso); }
+.matrix-cell.gap { background: var(--status-gap-bg); color: var(--status-gap); }
+.matrix-cell.noaplica { background: var(--status-noaplica-bg); color: var(--status-noaplica); }
+
+/* Global matrix overview */
+.global-matrix-wrap {
+  margin: 0 0 5rem;
+  padding: 1.75rem 1.75rem 1.5rem;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+}
+.global-matrix-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.global-matrix-label::after {
+  content: '';
+  flex: 1;
+  height: 0.5px;
+  background: var(--border);
+}
+.global-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.global-matrix-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+.global-matrix-row-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-align: right;
+  font-family: var(--font-mono);
+}
+.global-matrix-cells {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.global-cell {
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.1s;
+}
+.global-cell:hover { transform: scale(1.18); z-index: 1; }
+.global-cell.tenes { background: var(--status-tenes-bg); color: var(--status-tenes); }
+.global-cell.progreso { background: var(--status-progreso-bg); color: var(--status-progreso); }
+.global-cell.gap { background: var(--status-gap-bg); color: var(--status-gap); }
+.global-cell.noaplica { background: var(--status-noaplica-bg); color: var(--status-noaplica); }
+
+@media (max-width: 600px) {
+  .global-matrix-row { grid-template-columns: 1fr; gap: 4px; }
+  .global-matrix-row-label { text-align: left; }
+}
+
+/* Body content */
+.prose p {
+  margin: 0 0 1.25rem;
+  color: var(--text-primary);
+}
+.prose p.muted { color: var(--text-secondary); }
+.prose a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 0.5px; text-underline-offset: 3px; }
+.prose strong { font-weight: 600; }
+.prose em { font-style: italic; }
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-elevated);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 0.5px solid var(--border);
+}
+
+.prose h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 2.5rem 0 1rem;
+  font-variation-settings: "opsz" 36;
+}
+.prose h4 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  margin: 1.75rem 0 0.75rem;
+}
+
+/* Items list */
+.items {
+  margin: 1.5rem 0 2rem;
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.item {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 0.5px solid var(--border);
+  align-items: start;
+}
+.item:last-child { border-bottom: none; }
+.item-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  padding-top: 3px;
+}
+.item-body {
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.item-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+.item-note {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.badge-tenes { background: var(--status-tenes-bg); color: var(--status-tenes); }
+.badge-tenes::before { background: var(--status-tenes); }
+.badge-progreso { background: var(--status-progreso-bg); color: var(--status-progreso); }
+.badge-progreso::before { background: var(--status-progreso); }
+.badge-gap { background: var(--status-gap-bg); color: var(--status-gap); }
+.badge-gap::before { background: var(--status-gap); }
+.badge-noaplica { background: var(--status-noaplica-bg); color: var(--status-noaplica); }
+.badge-noaplica::before { background: var(--status-noaplica); }
+
+/* Code blocks */
+pre {
+  background: #1F1F1D;
+  color: #E8E6DE;
+  padding: 18px 20px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+  margin: 1.5rem 0 2rem;
+}
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+.code-label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+}
+.tok-kw { color: #C28F4D; }
+.tok-fn { color: #8BB4E0; }
+.tok-str { color: #A8C982; }
+.tok-num { color: #D8A8C0; }
+.tok-com { color: #6B6B66; font-style: italic; }
+.tok-op { color: #C9C7BE; }
+.tok-tbl { color: #E8C087; }
+
+/* Callout box */
+.callout {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.callout-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.callout p { margin: 0; font-size: 14.5px; line-height: 1.6; }
+.callout p + p { margin-top: 0.75rem; }
+
+.callout-warn {
+  background: #F8F1E2;
+  border-left-color: var(--status-progreso);
+}
+.callout-warn .callout-label { color: var(--status-progreso); }
+
+.future-notes {
+  margin: 3rem 0 2rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--surface-elevated);
+  border-radius: 6px;
+  border: 0.5px dashed var(--border-strong);
+  position: relative;
+}
+.future-notes-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.future-notes-label::before {
+  content: '';
+  width: 14px;
+  height: 0.5px;
+  background: var(--text-muted);
+}
+.future-notes h3 {
+  margin-top: 0.25rem !important;
+  font-size: 19px !important;
+  color: var(--text-primary);
+}
+.future-notes h4 {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--text-primary);
+}
+.future-notes p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+.future-notes p:last-child { margin-bottom: 0; }
+.future-notes code {
+  background: var(--surface);
+}
+
+/* Filters */
+.filter-bar {
+  position: sticky;
+  top: 64px;
+  background: var(--bg);
+  padding: 1rem 0;
+  margin-bottom: 0;
+  z-index: 50;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 0.5px solid var(--border);
+  flex-wrap: wrap;
+}
+.filter-btn {
+  background: transparent;
+  border: 0.5px solid var(--border-strong);
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-btn:hover { color: var(--text-primary); }
+.filter-btn.active {
+  background: var(--text-primary);
+  color: var(--bg);
+  border-color: var(--text-primary);
+}
+.filter-input {
+  flex: 1;
+  min-width: 200px;
+  background: var(--surface);
+  border: 0.5px solid var(--border-strong);
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-family: inherit;
+  font-size: 12.5px;
+}
+
+.item.hidden { display: none; }
+
+/* Decisions table */
+.decisions {
+  margin: 2rem 0;
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.decision-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 0.5px solid var(--border);
+}
+.decision-row:last-child { border-bottom: none; }
+.decision-cell {
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.decision-cell:first-child {
+  background: var(--surface-elevated);
+  border-right: 0.5px solid var(--border);
+  font-weight: 500;
+}
+
+/* Closing */
+.closing {
+  margin-top: 6rem;
+  padding-top: 3rem;
+  border-top: 0.5px solid var(--border-strong);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding: 0 1.25rem; }
+  .sidebar { display: none; }
+  .hero h1 { font-size: 38px; }
+  .section h2 { font-size: 28px; }
+  .counters { grid-template-columns: repeat(2, 1fr); }
+  .decision-row { grid-template-columns: 1fr; }
+  .decision-cell:first-child { border-right: none; border-bottom: 0.5px solid var(--border); }
+  .topbar { padding: 0.875rem 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="brand-mark"></span>Spartan IT · Mapa de gaps de la API de Anthropic</div>
+    <div class="topbar-meta">Referencia técnica interna · v1 · jun 2026</div>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-label">Marco</div>
+  <a href="#intro">Prólogo</a>
+  <a href="#counters">Estado general</a>
+
+  <div class="sidebar-label">Áreas</div>
+  <a href="#estado"><span class="sidebar-num">01</span>Estado y persistencia</a>
+  <a href="#memoria"><span class="sidebar-num">02</span>Memoria entre sesiones</a>
+  <a href="#contexto"><span class="sidebar-num">03</span>Manejo de contexto</a>
+  <a href="#routing"><span class="sidebar-num">04</span>Routing y proveedores</a>
+  <a href="#rag"><span class="sidebar-num">05</span>RAG y documentos</a>
+  <a href="#tools"><span class="sidebar-num">06</span>Tool calling</a>
+  <a href="#web"><span class="sidebar-num">07</span>Búsqueda web</a>
+  <a href="#agentes"><span class="sidebar-num">08</span>Multi-agente</a>
+
+  <div class="sidebar-label">Cierre</div>
+  <a href="#decisiones">Decisiones arquitectónicas</a>
+  <a href="#prioridades">Qué priorizamos</a>
+</nav>
+
+<main class="content">
+
+<section id="intro" class="hero">
+  <div class="hero-eyebrow">Referencia técnica · Equipo Spartan IT</div>
+  <h1>Lo que la API <em>no hace</em> y lo que igual tenemos que construir</h1>
+  <div class="hero-lead">
+    <p>Este documento mapea 50 capacidades que la API de Anthropic no provee de forma nativa, contra el estado real de nuestro stack. La lista viene de una serie de artículos de Backboard, que vende una solución SaaS para todos estos problemas. El framing original es de marketing. Acá lo desarmamos con tono honesto: qué tenemos, qué estamos construyendo, qué falta, y qué deliberadamente no aplica a nuestro modelo de negocio.</p>
+    <p>No es una checklist de features. Es un mapa para Tomás, Alberto y yo de dónde estamos parados frente a un benchmark externo, con el código y las decisiones documentadas para no tener que rederivar todo cuando aparezca el próximo cliente.</p>
+  </div>
+  <div class="hero-meta">
+    <div><span>Stack base</span>Laravel · PostgreSQL · pgvector · BGE-M3</div>
+    <div><span>Despliegue</span>Cloud Run · Docker · GCP</div>
+    <div><span>Verticales activas</span>Laboratorio clínico · Cerealera</div>
+  </div>
+</section>
+
+<section id="counters">
+  <div class="counters">
+    <div class="counter tenes"><div class="counter-num">11</div><div class="counter-label">TENEMOS</div></div>
+    <div class="counter progreso"><div class="counter-num">13</div><div class="counter-label">EN PROGRESO</div></div>
+    <div class="counter gap"><div class="counter-num">21</div><div class="counter-label">GAP</div></div>
+    <div class="counter noaplica"><div class="counter-num">5</div><div class="counter-label">NO APLICA</div></div>
+  </div>
+
+  <div class="global-matrix-wrap">
+    <div class="global-matrix-label">Vista general · 50 items por área</div>
+    <div class="global-matrix" id="global-matrix"></div>
+  </div>
+</section>
+
+<!-- ============== SECCIÓN 1: ESTADO ============== -->
+<section id="estado" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 01 / ITEMS 1-7</div>
+    <h2>Estado y persistencia</h2>
+    <p class="section-subtitle">Threads, historial de conversación, aislamiento por usuario</p>
+  </div>
+
+  <div class="matrix" id="matrix-estado"></div>
+
+  <div class="prose">
+    <p>La API de Anthropic es <em>stateless</em>. Cada llamada parte de cero: el modelo no recuerda nada de la conversación anterior a menos que se lo mandes vos en el array de mensajes. Esto no es un bug, es la naturaleza del producto. La API es el motor de inferencia, no una plataforma de conversación.</p>
+
+    <p>Lo que en Claude Desktop se siente como continuidad nativa (la conversación que persiste, que retomás días después, que tiene un historial) es infraestructura que Anthropic construyó <em>encima</em> de su propia API. Cuando vas a la API directa, esa capa la tenés que construir vos.</p>
+
+    <h3>El concepto: thread como objeto persistente</h3>
+
+    <p>Un thread es una conversación que vive en tu base de datos con un ID propio. Cada mensaje (del usuario y del asistente) se guarda. Antes de cada nueva llamada a la API, reconstruís el historial leyendo de la DB y se lo pasás al modelo. El usuario no ve esa mecánica, pero es lo que hace que la conversación parezca persistente.</p>
+
+    <p>En nuestro stack este componente vive en el <code>AgentService</code> (Phase 02). El schema básico es directo:</p>
+
+    <div class="code-label">SQL · Schema mínimo de threads</div>
+<pre><span class="tok-kw">CREATE TABLE</span> <span class="tok-tbl">threads</span> (
+  id            UUID <span class="tok-kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       UUID <span class="tok-kw">NOT NULL</span>,
+  assistant_id  UUID <span class="tok-kw">NOT NULL</span>,
+  metadata      JSONB <span class="tok-kw">DEFAULT</span> <span class="tok-str">'{}'</span>::jsonb,
+  created_at    TIMESTAMPTZ <span class="tok-kw">DEFAULT</span> now(),
+  updated_at    TIMESTAMPTZ <span class="tok-kw">DEFAULT</span> now()
+);
+
+<span class="tok-kw">CREATE TABLE</span> <span class="tok-tbl">messages</span> (
+  id            UUID <span class="tok-kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  thread_id     UUID <span class="tok-kw">REFERENCES</span> threads(id) <span class="tok-kw">ON DELETE CASCADE</span>,
+  role          TEXT <span class="tok-kw">NOT NULL</span>,  <span class="tok-com">-- 'user', 'assistant', 'tool'</span>
+  content       TEXT,
+  tool_calls    JSONB,
+  tool_call_id  TEXT,
+  created_at    TIMESTAMPTZ <span class="tok-kw">DEFAULT</span> now()
+);
+
+<span class="tok-kw">CREATE INDEX</span> idx_messages_thread <span class="tok-kw">ON</span> messages(thread_id, created_at);</pre>
+
+    <p>El <code>metadata</code> JSONB es la clave para multi-tenancy: ahí va el <code>cliente_id</code>, el plan, el canal de origen. Permite filtrar threads sin tablas separadas por cliente. Es exactamente lo que el item 5 del listado describe.</p>
+
+    <h3>La diferencia entre stateless y stateful en la práctica</h3>
+
+    <p>El loop en PHP, simplificado, queda así:</p>
+
+    <div class="code-label">PHP · AgentService · loop básico</div>
+<pre><span class="tok-kw">public function</span> <span class="tok-fn">sendMessage</span>(<span class="tok-kw">string</span> $threadId, <span class="tok-kw">string</span> $userMessage): <span class="tok-kw">array</span>
+{
+    <span class="tok-com">// 1. Persistir el mensaje del usuario</span>
+    $this->messages->create([
+        <span class="tok-str">'thread_id'</span> => $threadId,
+        <span class="tok-str">'role'</span>      => <span class="tok-str">'user'</span>,
+        <span class="tok-str">'content'</span>   => $userMessage,
+    ]);
+
+    <span class="tok-com">// 2. Reconstruir el historial completo desde la DB</span>
+    $history = $this->messages
+        ->where(<span class="tok-str">'thread_id'</span>, $threadId)
+        ->orderBy(<span class="tok-str">'created_at'</span>)
+        ->get()
+        ->map(<span class="tok-kw">fn</span>($m) => [<span class="tok-str">'role'</span> => $m->role, <span class="tok-str">'content'</span> => $m->content])
+        ->toArray();
+
+    <span class="tok-com">// 3. Llamar a la API con el historial completo</span>
+    $response = $this->anthropic->messages()->create([
+        <span class="tok-str">'model'</span>    => <span class="tok-str">'claude-sonnet-4-6'</span>,
+        <span class="tok-str">'messages'</span> => $history,
+    ]);
+
+    <span class="tok-com">// 4. Persistir la respuesta</span>
+    $this->messages->create([
+        <span class="tok-str">'thread_id'</span> => $threadId,
+        <span class="tok-str">'role'</span>      => <span class="tok-str">'assistant'</span>,
+        <span class="tok-str">'content'</span>   => $response->content[<span class="tok-num">0</span>]->text,
+    ]);
+
+    <span class="tok-kw">return</span> $response;
+}</pre>
+
+    <p>Esto es exactamente lo que Backboard hace internamente. La única diferencia es que ellos te cobran por hacerlo y los datos pasan por sus servidores. Para nuestros clientes en sectores regulados, ese trade-off no es aceptable.</p>
+  </div>
+
+  <div class="items" id="items-estado"></div>
+
+  <div class="callout">
+    <div class="callout-label">Estado real en Spartan IT</div>
+    <p>El schema está. El loop básico está. Lo que queda por consolidar es el ciclo completo de "retomar conversaciones viejas" como flujo de UX: hoy podés reabrir un thread por ID, pero no hay un selector de threads anteriores para el usuario, ni búsqueda dentro del historial. Para la cerealera con Luciana esto va a aparecer rápido porque ella necesita volver sobre conversaciones específicas.</p>
+  </div>
+</section>
+
+<!-- ============== SECCIÓN 2: MEMORIA ============== -->
+<section id="memoria" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 02 / ITEMS 8-17</div>
+    <h2>Memoria entre sesiones</h2>
+    <p class="section-subtitle">La distinción más confundida del stack de IA</p>
+  </div>
+
+  <div class="matrix" id="matrix-memoria"></div>
+
+  <div class="prose">
+    <p>Antes de cualquier código, hay que dejar clara la distinción que confunde a casi todo el mundo:</p>
+
+    <p><strong>Contexto de conversación</strong> es lo que está en el thread actual. Dura mientras el thread esté activo. Se carga en cada llamada como parte del array de mensajes. Es lo de la sección anterior.</p>
+
+    <p><strong>Memoria persistente</strong> es un store de "hechos sobre el usuario" que vive fuera de cualquier conversación específica. Se alimenta de los threads pero existe independientemente. Cuando arranca un thread nuevo, las memorias relevantes se inyectan automáticamente en el contexto antes de que el modelo vea el primer mensaje.</p>
+
+    <p class="muted">Analogía: el contexto es la memoria de trabajo. La memoria persistente es lo que sabés de una persona aunque no estés hablando con ella en este momento.</p>
+
+    <h3>Lo que la API no provee</h3>
+
+    <p>La API no tiene ningún concepto de memoria persistente. No hay un endpoint para "guardar este hecho sobre el usuario". Tampoco hay extracción automática: el modelo no decide por sí mismo qué vale la pena recordar de una conversación. Todo eso es infraestructura que vive afuera de la API.</p>
+
+    <h3>Cómo se construye el pipeline de memoria</h3>
+
+    <p>Son tres componentes separados:</p>
+
+    <h4>1. Extracción</h4>
+    <p>Después de cada mensaje (o cada N mensajes, o cuando se cierra el thread), corrés un prompt aparte sobre la conversación que dice: <em>"De este intercambio, ¿qué información estable vale la pena recordar para conversaciones futuras?"</em>. El output es un JSON estructurado.</p>
+
+    <div class="code-label">PHP · Extractor de memoria</div>
+<pre><span class="tok-kw">public function</span> <span class="tok-fn">extractFacts</span>(<span class="tok-kw">array</span> $recentMessages): <span class="tok-kw">array</span>
+{
+    $conversation = collect($recentMessages)
+        ->map(<span class="tok-kw">fn</span>($m) => <span class="tok-str">"{$m['role']}: {$m['content']}"</span>)
+        ->implode(<span class="tok-str">"\n"</span>);
+
+    $response = $this->anthropic->messages()->create([
+        <span class="tok-str">'model'</span>     => <span class="tok-str">'claude-haiku-4-5-20251001'</span>, <span class="tok-com">// barato y rápido</span>
+        <span class="tok-str">'system'</span>    => $this->getExtractionPrompt(), <span class="tok-com">// custom por asistente</span>
+        <span class="tok-str">'messages'</span>  => [[<span class="tok-str">'role'</span> => <span class="tok-str">'user'</span>, <span class="tok-str">'content'</span> => $conversation]],
+    ]);
+
+    <span class="tok-kw">return</span> json_decode($response->content[<span class="tok-num">0</span>]->text, <span class="tok-kw">true</span>);
+}</pre>
+
+    <p>El prompt de extracción es específico por dominio. Para la cerealera querés capturar señales comerciales (preferencias de pago, productos consultados frecuentemente). Para el laboratorio, contexto clínico recurrente. Esto es lo que el item 15 llama "custom extraction prompts" y es algo que vos podés diseñar mejor que Backboard porque conocés el dominio.</p>
+
+    <h4>2. Almacenamiento</h4>
+    <p>Una tabla simple en PostgreSQL. La columna de embedding habilita búsqueda semántica sobre las memorias (item 12).</p>
+
+    <div class="code-label">SQL · Store de memorias de usuario</div>
+<pre><span class="tok-kw">CREATE TABLE</span> <span class="tok-tbl">user_memories</span> (
+  id          UUID <span class="tok-kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id     UUID <span class="tok-kw">NOT NULL</span>,
+  assistant_id UUID <span class="tok-kw">NOT NULL</span>,
+  fact        TEXT <span class="tok-kw">NOT NULL</span>,
+  category    TEXT,                  <span class="tok-com">-- 'preference', 'context', 'history'</span>
+  confidence  REAL <span class="tok-kw">DEFAULT</span> <span class="tok-num">1.0</span>,
+  embedding   vector(<span class="tok-num">1024</span>),       <span class="tok-com">-- BGE-M3</span>
+  source_thread UUID <span class="tok-kw">REFERENCES</span> threads(id),
+  created_at  TIMESTAMPTZ <span class="tok-kw">DEFAULT</span> now(),
+  updated_at  TIMESTAMPTZ <span class="tok-kw">DEFAULT</span> now()
+);
+
+<span class="tok-kw">CREATE INDEX</span> idx_memories_user <span class="tok-kw">ON</span> user_memories(user_id, assistant_id);
+<span class="tok-kw">CREATE INDEX</span> idx_memories_emb <span class="tok-kw">ON</span> user_memories
+  <span class="tok-kw">USING</span> hnsw (embedding vector_cosine_ops);</pre>
+
+    <h4>3. Recuperación</h4>
+    <p>Antes de cada llamada al modelo, hacés una búsqueda semántica sobre las memorias del usuario con el último mensaje como query. Los top-K resultados se inyectan en el system prompt.</p>
+
+    <h3>Lite vs. Pro: qué cambia realmente</h3>
+
+    <p>Lo que Backboard vende como "Memory Pro" no es magia. Es un pipeline con más pasadas:</p>
+
+    <h4>Lite — una sola pasada</h4>
+    <p>Prompt simple de extracción con Haiku. Devuelve JSON. Se guarda. Listo. Útil para preferencias de UI, contexto casual, datos no críticos.</p>
+
+    <h4>Pro — pipeline multi-paso con verificación</h4>
+    <p>Tres pasadas en lugar de una:</p>
+
+    <ol>
+      <li><strong>Extracción con chain-of-thought:</strong> Sonnet razonando paso a paso sobre qué información es estable vs. transitoria, qué entra en conflicto con memorias existentes.</li>
+      <li><strong>Reranking contra memorias previas:</strong> búsqueda de memorias similares del usuario. Si hay conflicto, decisión explícita: <em>update</em> vs. <em>add</em> vs. <em>discard</em>.</li>
+      <li><strong>Validación final:</strong> un modelo critic verifica que la extracción no introduce datos erróneos.</li>
+    </ol>
+
+    <p>Para el laboratorio sí justifica Pro: un dato clínico mal extraído puede causar daño. Para la cerealera con Luciana, Lite alcanza para preferencias y patrones de consulta.</p>
+  </div>
+
+  <div class="items" id="items-memoria"></div>
+
+  <div class="callout callout-warn">
+    <div class="callout-label">Lo que falta construir</div>
+    <p>Este es el área con más gaps abiertos en nuestro stack: 7 de 10 items en rojo. No es una crítica, es una decisión implícita de priorización. Hasta ahora ningún cliente activo lo necesita en producción. Pero el momento en que la cerealera empieza a tener volumen de queries repetitivas de Luciana, vamos a querer que el agente recuerde patrones de cuentas frecuentes sin que ella tenga que re-establecerlos cada sesión.</p>
+    <p>El componente de extracción es lo primero a implementar. El store ya está cerca (mismo schema que ya usamos para RAG). La recuperación es trivial una vez que existe el store.</p>
+  </div>
+</section>
+
+<!-- ============== SECCIÓN 3: CONTEXTO ============== -->
+<section id="contexto" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 03 / ITEMS 18-21</div>
+    <h2>Manejo del context window</h2>
+    <p class="section-subtitle">El problema silencioso que aparece tarde</p>
+  </div>
+
+  <div class="matrix" id="matrix-contexto"></div>
+
+  <div class="prose">
+    <p>Claude Opus tiene 200K tokens de ventana de contexto. Suena enorme hasta que te das cuenta de que una conversación productiva en el laboratorio puede acumular: 50 mensajes de chat + 5 informes anatomopatológicos completos + memorias inyectadas + el system prompt + las tools definidas. Sumás eso a lo largo de tres semanas y aparece el techo.</p>
+
+    <p>Cuando la conversación excede el límite, la API simplemente devuelve un error. No hay degradación elegante automática. Esa lógica es tuya.</p>
+
+    <h3>Estrategias de truncación</h3>
+
+    <p>Tres patrones, de más simple a más sofisticado:</p>
+
+    <h4>Sliding window</h4>
+    <p>Conservás el system prompt + los últimos N mensajes. Lo más viejo se descarta. Funciona para conversaciones donde el contexto reciente importa más que el histórico. Es 10 líneas de código.</p>
+
+    <h4>Resumen progresivo</h4>
+    <p>Cuando la conversación se acerca al límite, corrés un prompt aparte que resume los primeros N mensajes en un párrafo, y reemplazás esos mensajes por el resumen. Conservás la esencia pero perdés detalles. Es lo que hace ChatGPT internamente.</p>
+
+    <h4>Resumen jerárquico</h4>
+    <p>Múltiples niveles de resumen: detalle reciente + resumen de la última semana + resumen del mes anterior. Más complejo de mantener pero conserva información relevante a largo plazo.</p>
+
+    <div class="code-label">PHP · Sliding window con margen de seguridad</div>
+<pre><span class="tok-kw">public function</span> <span class="tok-fn">buildContext</span>(<span class="tok-kw">string</span> $threadId, <span class="tok-kw">int</span> $maxTokens = <span class="tok-num">180000</span>): <span class="tok-kw">array</span>
+{
+    $messages = $this->messages
+        ->where(<span class="tok-str">'thread_id'</span>, $threadId)
+        ->orderBy(<span class="tok-str">'created_at'</span>, <span class="tok-str">'desc'</span>)
+        ->get();
+
+    $tokenCount = <span class="tok-num">0</span>;
+    $included = [];
+
+    <span class="tok-kw">foreach</span> ($messages <span class="tok-kw">as</span> $msg) {
+        $estimated = $this->estimateTokens($msg->content); <span class="tok-com">// ~4 chars por token</span>
+        <span class="tok-kw">if</span> ($tokenCount + $estimated > $maxTokens) <span class="tok-kw">break</span>;
+
+        $tokenCount += $estimated;
+        $included[] = [<span class="tok-str">'role'</span> => $msg->role, <span class="tok-str">'content'</span> => $msg->content];
+    }
+
+    <span class="tok-kw">return</span> array_reverse($included); <span class="tok-com">// orden cronológico para la API</span>
+}</pre>
+
+    <p>Para estimación rápida de tokens, la regla de "4 caracteres por token" funciona razonablemente bien para español. Si querés precisión real, Anthropic tiene un endpoint <code>/v1/messages/count_tokens</code> que devuelve el conteo exacto antes de mandar la llamada.</p>
+  </div>
+
+  <div class="items" id="items-contexto"></div>
+
+  <div class="callout">
+    <div class="callout-label">Estado real en Spartan IT</div>
+    <p>Hoy no tenemos manejo de overflow. Si una conversación supera el límite, falla. Para los volúmenes actuales (POC del laboratorio, primeras pruebas con la cerealera) no es un problema, pero es deuda técnica con vencimiento. La estrategia más simple — sliding window con resumen de la cola — es entre medio día y dos días de trabajo. Vale la pena antes de que aparezca en producción.</p>
+  </div>
+</section>
+
+<!-- ============== SECCIÓN 4: ROUTING ============== -->
+<section id="routing" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 04 / ITEMS 22-27</div>
+    <h2>Routing y multi-proveedor</h2>
+    <p class="section-subtitle">Donde la decisión de Spartan diverge de Backboard a propósito</p>
+  </div>
+
+  <div class="matrix" id="matrix-routing"></div>
+
+  <div class="prose">
+    <p>Esta sección es donde más se nota la diferencia de modelo de negocio. Backboard vende "17.000 modelos con una sola API key" como ventaja. Para sus clientes (developers individuales construyendo apps de consumo) es genuino: querés probar Llama, Mistral, Gemini sin abrir cuentas en cada proveedor.</p>
+
+    <p>Para nuestros clientes — laboratorios y empresas en regulados — esa amplitud es exactamente lo contrario de lo que necesitan. <strong>Cuantos menos proveedores pasen por sus datos, mejor.</strong> Pasar datos clínicos de un paciente argentino por un proxy de un SaaS canadiense que a su vez los manda a 17.000 modelos distintos en jurisdicciones impredecibles es, literalmente, un problema legal bajo Ley 25.326.</p>
+
+    <p>Por eso varios items de esta sección quedan marcados como "no aplica": no es que no podamos hacerlos, es que no queremos.</p>
+
+    <h3>Lo que sí tiene sentido: routing por complejidad dentro del mismo proveedor</h3>
+
+    <p>Anthropic tiene tres modelos vivos: Haiku, Sonnet, Opus. Cada uno con su perfil de precio y capacidad. Tiene mucho sentido usar el más barato para tareas simples y subir solo cuando el problema lo justifica.</p>
+
+    <h4>Casos típicos de routing interno:</h4>
+
+    <ul style="margin: 0 0 1.5rem; padding-left: 1.5rem; color: var(--text-primary);">
+      <li><strong>Haiku:</strong> clasificación de intent, extracción de entidades, validaciones, prompts cortos con output estructurado.</li>
+      <li><strong>Sonnet:</strong> conversación general, resúmenes, búsqueda con razonamiento, generación de drafts.</li>
+      <li><strong>Opus:</strong> síntesis compleja, análisis con múltiples fuentes, decisiones que requieren múltiples pasos de razonamiento.</li>
+    </ul>
+
+    <div class="code-label">PHP · Router básico por tarea</div>
+<pre><span class="tok-kw">class</span> ModelRouter
+{
+    <span class="tok-kw">private const</span> ROUTES = [
+        <span class="tok-str">'classify'</span>  => [<span class="tok-str">'model'</span> => <span class="tok-str">'claude-haiku-4-5-20251001'</span>],
+        <span class="tok-str">'extract'</span>   => [<span class="tok-str">'model'</span> => <span class="tok-str">'claude-haiku-4-5-20251001'</span>],
+        <span class="tok-str">'chat'</span>      => [<span class="tok-str">'model'</span> => <span class="tok-str">'claude-sonnet-4-6'</span>],
+        <span class="tok-str">'summarize'</span> => [<span class="tok-str">'model'</span> => <span class="tok-str">'claude-sonnet-4-6'</span>],
+        <span class="tok-str">'analyze'</span>   => [<span class="tok-str">'model'</span> => <span class="tok-str">'claude-opus-4-7'</span>],
+        <span class="tok-str">'synthesize'</span>=> [<span class="tok-str">'model'</span> => <span class="tok-str">'claude-opus-4-7'</span>],
+    ];
+
+    <span class="tok-kw">public function</span> <span class="tok-fn">resolve</span>(<span class="tok-kw">string</span> $taskType): <span class="tok-kw">array</span>
+    {
+        <span class="tok-kw">return</span> self::ROUTES[$taskType] ?? self::ROUTES[<span class="tok-str">'chat'</span>];
+    }
+}</pre>
+
+    <p>El ahorro real aparece a escala. Si el 70% de las queries de la cerealera son clasificaciones simples ("¿esto es consulta de saldo, factura o reclamo?"), mandarlas a Haiku en lugar de Opus reduce costos por un factor de 30. A volumen de cientos de queries por día, eso se nota en la factura mensual.</p>
+  </div>
+
+  <div class="items" id="items-routing"></div>
+
+  <div class="callout">
+    <div class="callout-label">Diferenciador frente a Backboard</div>
+    <p>La restricción a un solo proveedor no es una limitación de nuestro stack, es una característica deliberada del producto. Lo que para Backboard es desventaja, para nosotros es argumento de venta: los datos del cliente no pasan por ningún intermediario fuera del que el cliente ya autorizó. Es la diferencia entre vender a developers vs. vender a hospitales.</p>
+  </div>
+</section>
+
+<!-- ============== SECCIÓN 5: RAG ============== -->
+<section id="rag" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 05 / ITEMS 28-35</div>
+    <h2>RAG y documentos</h2>
+    <p class="section-subtitle">Donde más fuertes estamos y donde está el gap más concreto</p>
+  </div>
+
+  <div class="matrix" id="matrix-rag"></div>
+
+  <div class="prose">
+    <p>RAG (Retrieval-Augmented Generation) es darle al modelo acceso a documentos que no estuvieron en su entrenamiento. La API no provee nada de esto: ni indexación, ni búsqueda, ni almacenamiento. Es 100% infraestructura externa.</p>
+
+    <p>En nuestro stack este componente está más maduro que otros. 743 PDFs indexados con <code>pdfplumber</code> + BGE-M3 + pgvector funcionando. Pero hay un gap concreto e importante: la búsqueda es solo semántica. Falta integrar búsqueda por keyword.</p>
+
+    <h3>Por qué la búsqueda semántica sola no alcanza</h3>
+
+    <p>Los embeddings funcionan bien cuando lo que se busca es <em>significado</em>. "El paciente tiene eritrocitosis" matchea bien con una query como "aumento de glóbulos rojos". El vector captura la relación conceptual aunque las palabras sean distintas.</p>
+
+    <p>Pero los embeddings fallan con <em>identificadores literales</em>: códigos, números de cuenta, IDs de informe, nombres propios poco comunes. Si alguien pregunta "¿qué dice el informe 4023-A?", el vector del 4023-A no tiene significado conceptual — es un string arbitrario. La búsqueda semántica va a devolver el chunk más parecido <em>conceptualmente</em>, que puede no contener "4023-A" en ninguna parte.</p>
+
+    <p>Para el laboratorio esto es crítico: códigos de protocolo, IDs de muestra, nombres específicos. Para la cerealera también: número de cliente, código de producto, número de factura.</p>
+
+    <h3>La solución: búsqueda híbrida con RRF</h3>
+
+    <p>Dos búsquedas en paralelo y fusión por <em>Reciprocal Rank Fusion</em>. La fórmula es simple: para cada chunk recuperado, score = 1/(k + rank). El chunk con mejor rank en ambas listas gana. El <code>k</code> estándar es 60.</p>
+
+    <div class="code-label">SQL · Setup para búsqueda híbrida</div>
+<pre><span class="tok-com">-- Columna tsvector generada automáticamente a partir del contenido</span>
+<span class="tok-kw">ALTER TABLE</span> <span class="tok-tbl">document_chunks</span> <span class="tok-kw">ADD COLUMN</span> tsv tsvector
+  <span class="tok-kw">GENERATED ALWAYS AS</span> (to_tsvector(<span class="tok-str">'spanish'</span>, content)) <span class="tok-kw">STORED</span>;
+
+<span class="tok-kw">CREATE INDEX</span> idx_chunks_tsv <span class="tok-kw">ON</span> document_chunks <span class="tok-kw">USING</span> gin(tsv);
+
+<span class="tok-com">-- El índice HNSW para búsqueda semántica ya existe en nuestro stack</span>
+<span class="tok-com">-- CREATE INDEX idx_chunks_emb ON document_chunks USING hnsw (embedding vector_cosine_ops);</span></pre>
+
+    <div class="code-label">SQL · Query híbrida con RRF</div>
+<pre><span class="tok-kw">WITH</span> semantic <span class="tok-kw">AS</span> (
+  <span class="tok-kw">SELECT</span> id, content,
+         ROW_NUMBER() <span class="tok-kw">OVER</span> (<span class="tok-kw">ORDER BY</span> embedding <span class="tok-op">&lt;=&gt;</span> $1) <span class="tok-kw">AS</span> rank
+  <span class="tok-kw">FROM</span> document_chunks
+  <span class="tok-kw">WHERE</span> assistant_id = $3
+  <span class="tok-kw">ORDER BY</span> embedding <span class="tok-op">&lt;=&gt;</span> $1
+  <span class="tok-kw">LIMIT</span> <span class="tok-num">20</span>
+),
+keyword <span class="tok-kw">AS</span> (
+  <span class="tok-kw">SELECT</span> id, content,
+         ROW_NUMBER() <span class="tok-kw">OVER</span> (<span class="tok-kw">ORDER BY</span> ts_rank(tsv, query) <span class="tok-kw">DESC</span>) <span class="tok-kw">AS</span> rank
+  <span class="tok-kw">FROM</span> document_chunks, to_tsquery(<span class="tok-str">'spanish'</span>, $2) query
+  <span class="tok-kw">WHERE</span> assistant_id = $3 <span class="tok-kw">AND</span> tsv @@ query
+  <span class="tok-kw">ORDER BY</span> ts_rank(tsv, query) <span class="tok-kw">DESC</span>
+  <span class="tok-kw">LIMIT</span> <span class="tok-num">20</span>
+),
+fused <span class="tok-kw">AS</span> (
+  <span class="tok-kw">SELECT</span>
+    COALESCE(s.id, k.id) <span class="tok-kw">AS</span> id,
+    COALESCE(s.content, k.content) <span class="tok-kw">AS</span> content,
+    COALESCE(<span class="tok-num">1.0</span> / (<span class="tok-num">60</span> + s.rank), <span class="tok-num">0</span>) +
+    COALESCE(<span class="tok-num">1.0</span> / (<span class="tok-num">60</span> + k.rank), <span class="tok-num">0</span>) <span class="tok-kw">AS</span> score
+  <span class="tok-kw">FROM</span> semantic s
+  <span class="tok-kw">FULL OUTER JOIN</span> keyword k <span class="tok-kw">ON</span> s.id = k.id
+)
+<span class="tok-kw">SELECT</span> * <span class="tok-kw">FROM</span> fused <span class="tok-kw">ORDER BY</span> score <span class="tok-kw">DESC</span> <span class="tok-kw">LIMIT</span> <span class="tok-num">10</span>;</pre>
+
+    <p>Tres parámetros (<code>$1</code> embedding del query, <code>$2</code> los términos para tsquery, <code>$3</code> el assistant_id para multi-tenancy). El resultado es una lista combinada donde los chunks que aparecen alto en ambas búsquedas dominan, los que aparecen solo en una son secundarios, y los que no aparecen en ninguna no entran.</p>
+
+    <h3>Detalle importante: stemming en español</h3>
+
+    <p><code>to_tsvector('spanish', ...)</code> aplica stemming: "eritrocito" matchea "eritrocitos", "factura" matchea "facturado". Esto a veces es lo que querés. Pero para códigos, IDs, nombres propios y términos técnicos exactos, conviene <code>'simple'</code> que no stemiza nada. Para el laboratorio probablemente querés dos columnas tsvector (una con stemming, otra sin) y buscar en ambas.</p>
+
+    <h3>Cuándo NO usar RAG: datos estructurados</h3>
+
+    <p>Esta es la confusión más común y la que más cuesta cara en producción. La búsqueda semántica solo tiene sentido sobre <em>texto libre</em>. Sobre datos estructurados (cuentas, saldos, fechas, números de factura) hacés SQL directo.</p>
+
+    <p>Para responder "¿cuánto debe el cliente Pérez?" no se hace embedding de la pregunta y búsqueda vectorial. Se hace una tool que ejecuta <code>SELECT SUM(saldo) WHERE cliente = 'Pérez'</code>. El modelo decide cuándo llamarla y con qué argumentos, pero la respuesta sale del SQL determinístico.</p>
+
+    <p>Esta distinción se ve más en la sección 06 (Tool calling). Por ahora la regla:</p>
+
+    <div class="callout">
+      <div class="callout-label">Regla práctica</div>
+      <p>Texto libre (observaciones clínicas, descripciones, comentarios, documentación) → embedding + búsqueda híbrida. Datos estructurados (números, fechas, IDs, categorías, relaciones) → SQL directo vía tool. Si la mayoría de las columnas de una tabla son numéricas, RAG sobre esa tabla es probablemente el patrón equivocado.</p>
+    </div>
+
+    <h3>Scoping de documentos: assistant-level vs thread-level</h3>
+
+    <p>Este es el gap concreto del item 31. Hoy nuestros documentos son globales por asistente: cualquier thread del laboratorio ve todos los protocolos indexados. Bien. Pero falta el caso de "thread-level": un documento subido en una conversación específica que solo está disponible para esa conversación.</p>
+
+    <p>Casos donde aplica: Luciana sube un PDF con un acuerdo específico de un cliente, y no queremos que ese contenido aparezca en consultas de otros clientes. Un paciente sube su historial previo, y queremos que solo esté disponible en su thread.</p>
+
+    <p>El cambio es simple: un campo <code>thread_id NULL</code> en la tabla de documentos. Si está nulo, es global para el asistente. Si tiene valor, está scopeado a ese thread.</p>
+
+    <div class="code-label">SQL · Two-tier document scoping</div>
+<pre><span class="tok-kw">ALTER TABLE</span> <span class="tok-tbl">documents</span> <span class="tok-kw">ADD COLUMN</span> thread_id UUID
+  <span class="tok-kw">REFERENCES</span> threads(id) <span class="tok-kw">ON DELETE CASCADE</span>;
+
+<span class="tok-com">-- Query que respeta el scoping:</span>
+<span class="tok-kw">SELECT</span> * <span class="tok-kw">FROM</span> document_chunks dc
+<span class="tok-kw">JOIN</span> documents d <span class="tok-kw">ON</span> dc.document_id = d.id
+<span class="tok-kw">WHERE</span> d.assistant_id = $1
+  <span class="tok-kw">AND</span> (d.thread_id <span class="tok-kw">IS NULL</span> <span class="tok-kw">OR</span> d.thread_id = $2);</pre>
+
+    <div class="future-notes">
+      <div class="future-notes-label">Notas al margen — opciones futuras</div>
+      <h3>Caminos más sofisticados que existen pero no perseguimos hoy</h3>
+      <p>Dos upgrades posibles sobre la búsqueda híbrida básica que vale tener anotados. Ninguno es urgente. La regla: implementar el camino simple, medir dónde falla, y solo entonces evaluar si la complejidad adicional se justifica.</p>
+
+      <h4>Vectores dispersos nativos de BGE-M3</h4>
+      <p>BGE-M3 no solo produce el vector denso de 1024 dimensiones que ya usamos. En la misma pasada también puede generar un vector disperso de 250.002 dimensiones — una por cada token del vocabulario del modelo. La mayoría valen cero; las que tienen valor positivo son los tokens que efectivamente aparecen en el chunk, con un peso aprendido que aproxima rareza e importancia.</p>
+      <p>Conceptualmente superior a <code>tsvector</code> para la parte keyword: en lugar de stemming léxico estándar, es una representación aprendida del corpus. La desventaja: <code>pgvector</code> clásico no soporta vectores dispersos. Se necesita <code>pgvecto.rs</code> (extensión separada, en evolución) o migrar a una DB vectorial dedicada como Milvus.</p>
+      <p>Cuándo justificaría el cambio: cuando midamos que la búsqueda híbrida con <code>tsvector</code> está dejando pasar consultas que un vector disperso aprendido capturaría. Hoy no tenemos esa medición. Sería optimización prematura.</p>
+
+      <h4>ColBERT-style late interaction reranking</h4>
+      <p>BGE-M3 también produce representaciones multi-vector: un vector por token en lugar de un solo vector por documento. Esto habilita un patrón llamado <em>late interaction</em>: en lugar de comparar un único vector del query contra un único vector del chunk, comparás todos los vectores token-a-token y agregás los scores. Más preciso, más caro computacionalmente.</p>
+      <p>Se usa típicamente como segunda capa de reranking sobre los top-K candidatos que devuelve la búsqueda híbrida básica. El reranker oficial de la familia BGE es <code>bge-reranker-v2-m3</code>, disponible bajo la misma licencia.</p>
+      <p>Cuándo justificaría el costo: en casos donde precisión importa más que latencia. Para informes anatomopatológicos del laboratorio donde una decisión clínica depende del chunk correcto, tiene sentido. Para conversación en tiempo real con Luciana, agrega latencia que probablemente no compensa.</p>
+    </div>
+  </div>
+
+  <div class="items" id="items-rag"></div>
+
+  <div class="callout callout-warn">
+    <div class="callout-label">Prioridad inmediata</div>
+    <p>Búsqueda híbrida es el cambio más alto-valor / bajo-esfuerzo del mapa. Una semana de trabajo para Tomás. Impacto directo en calidad de respuesta del laboratorio. El two-tier scoping es trivial (un día). Si tuviera que elegir el primer gap a cerrar, sería este.</p>
+  </div>
+</section>
+
+<!-- ============== SECCIÓN 6: TOOLS ============== -->
+<section id="tools" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 06 / ITEMS 36-40</div>
+    <h2>Tool calling con estado</h2>
+    <p class="section-subtitle">Cómo el modelo "decide" y por qué no es magia</p>
+  </div>
+
+  <div class="matrix" id="matrix-tools"></div>
+
+  <div class="prose">
+    <p>Tool calling es el mecanismo por el cual el modelo invoca funciones externas durante una conversación. Es lo que convierte un chatbot en un agente. Sin tools, el modelo solo puede generar texto basado en lo que tiene en el contexto. Con tools, puede consultar bases de datos, llamar APIs, ejecutar código.</p>
+
+    <h3>Cómo "decide" el modelo qué tool llamar</h3>
+
+    <p>El modelo no tiene capacidad de decisión propia. Vos le pasás una lista de tools con descripciones. El modelo lee las descripciones y, en función de la pregunta del usuario, elige cuál (o cuáles) tools tienen sentido. La calidad de las descripciones determina la calidad de las decisiones.</p>
+
+    <div class="code-label">PHP · Definición de tools</div>
+<pre>$tools = [
+    [
+        <span class="tok-str">'name'</span> => <span class="tok-str">'search_internal_docs'</span>,
+        <span class="tok-str">'description'</span> => <span class="tok-str">'Busca en la documentación interna del laboratorio: protocolos, '</span> .
+                         <span class="tok-str">'procedimientos, manuales técnicos. Usar para preguntas sobre cómo se '</span> .
+                         <span class="tok-str">'hace algo internamente o qué dice un documento específico.'</span>,
+        <span class="tok-str">'input_schema'</span> => [
+            <span class="tok-str">'type'</span> => <span class="tok-str">'object'</span>,
+            <span class="tok-str">'properties'</span> => [
+                <span class="tok-str">'query'</span> => [<span class="tok-str">'type'</span> => <span class="tok-str">'string'</span>, <span class="tok-str">'description'</span> => <span class="tok-str">'Términos de búsqueda'</span>],
+            ],
+            <span class="tok-str">'required'</span> => [<span class="tok-str">'query'</span>],
+        ],
+    ],
+    [
+        <span class="tok-str">'name'</span> => <span class="tok-str">'get_patient_results'</span>,
+        <span class="tok-str">'description'</span> => <span class="tok-str">'Consulta los resultados de análisis de un paciente específico '</span> .
+                         <span class="tok-str">'por su ID. Devuelve valores cuantitativos y observaciones del '</span> .
+                         <span class="tok-str">'patólogo.'</span>,
+        <span class="tok-str">'input_schema'</span> => [
+            <span class="tok-str">'type'</span> => <span class="tok-str">'object'</span>,
+            <span class="tok-str">'properties'</span> => [
+                <span class="tok-str">'patient_id'</span> => [<span class="tok-str">'type'</span> => <span class="tok-str">'string'</span>],
+                <span class="tok-str">'date_from'</span>  => [<span class="tok-str">'type'</span> => <span class="tok-str">'string'</span>, <span class="tok-str">'format'</span> => <span class="tok-str">'date'</span>],
+            ],
+            <span class="tok-str">'required'</span> => [<span class="tok-str">'patient_id'</span>],
+        ],
+    ],
+];</pre>
+
+    <p>Cuando llega una pregunta como "¿cuáles fueron los resultados de Pérez del mes pasado?", el modelo lee las descripciones, identifica que <code>get_patient_results</code> es la que aplica, y devuelve un mensaje pidiendo invocarla con esos parámetros. Tu código ejecuta la función real (un SELECT a la DB), le devuelve el resultado al modelo, y el modelo continúa generando la respuesta con esos datos.</p>
+
+    <h3>El loop completo con estado persistente</h3>
+
+    <div class="code-label">PHP · Loop de tool calling con persistencia</div>
+<pre><span class="tok-kw">public function</span> <span class="tok-fn">runWithTools</span>(<span class="tok-kw">string</span> $threadId, <span class="tok-kw">string</span> $userMessage): <span class="tok-kw">string</span>
+{
+    $this->saveMessage($threadId, <span class="tok-str">'user'</span>, $userMessage);
+    $history = $this->buildContext($threadId);
+
+    <span class="tok-kw">while</span> (<span class="tok-kw">true</span>) {
+        $response = $this->anthropic->messages()->create([
+            <span class="tok-str">'model'</span>     => <span class="tok-str">'claude-sonnet-4-6'</span>,
+            <span class="tok-str">'tools'</span>     => $this->tools,
+            <span class="tok-str">'messages'</span>  => $history,
+        ]);
+
+        <span class="tok-com">// El modelo no necesita más tools: respuesta final</span>
+        <span class="tok-kw">if</span> ($response->stop_reason === <span class="tok-str">'end_turn'</span>) {
+            $text = $response->content[<span class="tok-num">0</span>]->text;
+            $this->saveMessage($threadId, <span class="tok-str">'assistant'</span>, $text);
+            <span class="tok-kw">return</span> $text;
+        }
+
+        <span class="tok-com">// El modelo pide ejecutar una o más tools</span>
+        <span class="tok-kw">if</span> ($response->stop_reason === <span class="tok-str">'tool_use'</span>) {
+            $toolResults = [];
+            <span class="tok-kw">foreach</span> ($response->content <span class="tok-kw">as</span> $block) {
+                <span class="tok-kw">if</span> ($block->type === <span class="tok-str">'tool_use'</span>) {
+                    $result = $this->dispatchTool($block->name, $block->input);
+                    $toolResults[] = [
+                        <span class="tok-str">'type'</span>        => <span class="tok-str">'tool_result'</span>,
+                        <span class="tok-str">'tool_use_id'</span> => $block->id,
+                        <span class="tok-str">'content'</span>     => json_encode($result),
+                    ];
+                }
+            }
+
+            <span class="tok-com">// Persistir el tool_use del modelo Y los results en la DB</span>
+            $this->saveAssistantToolCall($threadId, $response->content);
+            $this->saveToolResults($threadId, $toolResults);
+
+            <span class="tok-com">// Reconstruir el contexto y seguir</span>
+            $history = $this->buildContext($threadId);
+        }
+    }
+}</pre>
+
+    <p>El detalle clave del item 36 está en las llamadas a <code>saveAssistantToolCall</code> y <code>saveToolResults</code>: cada tool call y cada resultado se persiste en la tabla de mensajes. La próxima vez que se reconstruye el contexto, esos resultados están ahí. El modelo "recuerda" que ya consultó a Pérez la semana pasada porque está en el historial del thread.</p>
+
+    <h3>Tools vs. Skills: no es lo mismo</h3>
+
+    <p>Aclaración que vale repetir porque la confusión es común:</p>
+
+    <h4>Tools (function calling)</h4>
+    <p>Funciones que el modelo puede invocar vía la API. Se definen en el parámetro <code>tools</code> de cada llamada. El modelo decide cuándo usarlas. <strong>Esto es lo que usamos.</strong></p>
+
+    <h4>Skills</h4>
+    <p>Carpetas con <code>SKILL.md</code> + recursos que productos de Anthropic (Claude Desktop, claude.ai, Claude Code, Cowork) leen proactivamente. Son una capa de orquestación del cliente, no del modelo. <strong>No están disponibles vía la API directa.</strong> Si querés equivalente funcional en tu propio agente, lo construís como tools o como contexto inyectado en el system prompt.</p>
+
+    <h3>Casos donde el modelo no necesita tools</h3>
+
+    <p>Si alguien sube un contrato corto (cabe en el contexto) y pide revisarlo, no hace falta tool: el contrato va directo en el mensaje del usuario, el modelo lee, responde. Tool sería necesario si el contrato es grande y hay que indexarlo (RAG), o si la revisión requiere consultar tu base de jurisprudencia interna, o ejecutar una validación contra reglas estructuradas.</p>
+  </div>
+
+  <div class="items" id="items-tools"></div>
+
+  <div class="callout">
+    <div class="callout-label">Estado real en Spartan IT</div>
+    <p>El loop básico está implementado. Falta: ejecución paralela de tools (item 39) y streaming de la respuesta final (item 40). Paralelismo en PHP requiere algo más de trabajo (procesos hijos o cola). Streaming es soportado por la API de Anthropic vía Server-Sent Events; en nuestro AgentService falta integrarlo. Para Luciana viendo respuestas largas, va a importar pronto.</p>
+  </div>
+</section>
+
+<!-- ============== SECCIÓN 7: WEB SEARCH ============== -->
+<section id="web" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 07 / ITEMS 41-43</div>
+    <h2>Búsqueda web</h2>
+    <p class="section-subtitle">Lo que no necesitamos por ahora</p>
+  </div>
+
+  <div class="matrix" id="matrix-web"></div>
+
+  <div class="prose">
+    <p>La API de Anthropic tiene una tool nativa de búsqueda web (<code>web_search_20250305</code>) que el modelo puede activar cuando detecta que necesita información fuera de su entrenamiento. Backboard lo expone como un parámetro <code>web_search="Auto"</code>.</p>
+
+    <p>Para nuestros casos actuales, no aplica directamente:</p>
+
+    <ul style="margin: 0 0 1.5rem; padding-left: 1.5rem;">
+      <li><strong>Laboratorio:</strong> los datos relevantes son internos (protocolos, informes, resultados). La información que el modelo necesita está en los documentos indexados, no en la web.</li>
+      <li><strong>Cerealera:</strong> consultas sobre cuentas, saldos, productos del cliente. Información rigurosamente interna.</li>
+    </ul>
+
+    <p>Donde sí podría tener sentido en el futuro:</p>
+
+    <ul style="margin: 0 0 1.5rem; padding-left: 1.5rem;">
+      <li>Generador de informes ejecutivos (P3 del roadmap) que necesita información de mercado actualizada.</li>
+      <li>Agente de investigación legal que tiene que consultar fallos recientes.</li>
+      <li>Asistente comercial que necesita información pública sobre clientes potenciales.</li>
+    </ul>
+
+    <p>Si en el futuro lo necesitamos, agregarlo es trivial: una entrada más en el array de tools. La API maneja la búsqueda. Nosotros recibimos el resultado en el contexto.</p>
+  </div>
+
+  <div class="items" id="items-web"></div>
+</section>
+
+<!-- ============== SECCIÓN 8: AGENTES ============== -->
+<section id="agentes" class="section">
+  <div class="section-header">
+    <div class="section-num">SECCIÓN 08 / ITEMS 44-50</div>
+    <h2>Multi-agente</h2>
+    <p class="section-subtitle">Donde Dialectia ya validó el patrón y falta automatizarlo</p>
+  </div>
+
+  <div class="matrix" id="matrix-agentes"></div>
+
+  <div class="prose">
+    <p>Multi-agente es un agente coordinando a otros agentes especializados, cada uno con su propio system prompt, sus propias tools y potencialmente su propio modelo. Es el patrón natural cuando una tarea tiene componentes claramente separables: un investigador, un crítico, un sintetizador.</p>
+
+    <p>En Spartan IT ya hicimos el ejercicio manual con el cockpit de Dialectia. Probó que el patrón funciona y que distintos modelos pesan diferente en distintas tareas. Lo que falta es la versión automatizada dentro del AgentService.</p>
+
+    <h3>La arquitectura conceptual</h3>
+
+    <p>Tres elementos:</p>
+
+    <ol style="margin: 0 0 1.5rem; padding-left: 1.5rem;">
+      <li><strong>Especialistas:</strong> agentes con system prompt focalizado y un set acotado de tools. Cada uno tiene su propio thread donde acumula su trabajo.</li>
+      <li><strong>Coordinador:</strong> agente que recibe la pregunta original, decide qué especialistas necesita, distribuye trabajo, recoge resultados, sintetiza.</li>
+      <li><strong>Memoria compartida (opcional):</strong> store de memorias del usuario al que todos los especialistas tienen acceso, para que el contexto del usuario no se duplique.</li>
+    </ol>
+
+    <h3>Ejecución paralela vs. secuencial</h3>
+
+    <p>Cuando las tareas de los especialistas son independientes, deberían correr en paralelo. En PHP esto requiere procesos hijos (<code>pcntl_fork</code>), una cola con workers, o llamadas asíncronas con Guzzle. La opción más limpia para nuestro stack es Laravel Horizon con Redis: cada especialista se dispatch como un job, el coordinador espera con un <code>Bus::batch()</code>.</p>
+
+    <div class="code-label">PHP · Coordinador con batch paralelo</div>
+<pre><span class="tok-kw">use</span> Illuminate\Bus\Batch;
+<span class="tok-kw">use</span> Illuminate\Support\Facades\Bus;
+
+<span class="tok-kw">public function</span> <span class="tok-fn">runMultiAgent</span>(<span class="tok-kw">string</span> $userQuery): <span class="tok-kw">string</span>
+{
+    <span class="tok-com">// El coordinador decide qué especialistas correr</span>
+    $plan = $this->coordinator->planTasks($userQuery);
+
+    <span class="tok-com">// Dispatch en paralelo</span>
+    $batch = Bus::batch(
+        collect($plan)->map(<span class="tok-kw">fn</span>($task) =>
+            <span class="tok-kw">new</span> SpecialistAgentJob($task->specialist, $task->prompt)
+        )->toArray()
+    )->dispatch();
+
+    <span class="tok-com">// Esperar resultados (timeout configurable)</span>
+    $results = $this->awaitBatchResults($batch->id, timeout: <span class="tok-num">120</span>);
+
+    <span class="tok-com">// El coordinador sintetiza</span>
+    <span class="tok-kw">return</span> $this->coordinator->synthesize($userQuery, $results);
+}</pre>
+
+    <h3>Cuándo NO usar multi-agente</h3>
+
+    <p>El patrón es seductor pero caro. Cada agente es una llamada (o varias) a la API. Un sistema de 3 especialistas paralelos + coordinador es típicamente 5-8 llamadas vs. 1-2 de un agente único. Si el problema se puede resolver con un solo agente bien instruido y buen RAG, el multi-agente está sobre-engineereado.</p>
+
+    <p>Aplicar cuando: la tarea tiene componentes con conocimiento de dominio claramente distinto, o cuando paralelizar reduce wall-clock significativamente, o cuando el output requiere triangulación (investigador + crítico).</p>
+
+    <p>No aplicar cuando: la tarea es secuencial por naturaleza, o cuando un solo modelo con buenas tools ya resuelve.</p>
+  </div>
+
+  <div class="items" id="items-agentes"></div>
+
+  <div class="callout">
+    <div class="callout-label">Dos lecturas del item 50</div>
+    <p>El último item del listado original — "describir el sistema en lenguaje natural y que se construya solo" — es la apuesta más visible del MCP de Backboard, y la que mejor vende en un blog post. Para nuestro modelo de negocio esa lectura no aplica: la construcción de un agente para el laboratorio la hace alguien que entiende el dominio clínico, no Claude leyendo una frase. La creación es trabajo de consultoría.</p>
+    <p>Pero hay una segunda lectura del MCP que sí tiene sentido y es la más madura: <strong>como herramienta de observación y sintonía sobre los agentes que ya están en producción.</strong> La construcción es un evento puntual; la operación es la vida del sistema. Ver decisiones más abajo.</p>
+  </div>
+</section>
+
+<!-- ============== DECISIONES ============== -->
+<section id="decisiones" class="section">
+  <div class="section-header">
+    <div class="section-num">SÍNTESIS</div>
+    <h2>Decisiones arquitectónicas</h2>
+    <p class="section-subtitle">Por qué construimos vs. por qué no aplica</p>
+  </div>
+
+  <div class="prose">
+    <p>La tentación al ver una lista de 50 cosas que un producto comercial ofrece y nosotros no, es construirlas todas. La pregunta correcta no es "¿podemos hacer esto?", es "¿esto suma a nuestro modelo de negocio?". Algunas decisiones explícitas:</p>
+  </div>
+
+  <div class="decisions">
+    <div class="decision-row">
+      <div class="decision-cell">Multi-proveedor de modelos</div>
+      <div class="decision-cell">No. Anthropic exclusivo. La amplitud que para Backboard es feature, para nuestros clientes regulados es problema legal. Single provider es propiedad del producto.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">Embeddings locales (BGE-M3)</div>
+      <div class="decision-cell">Sí. Crítico. Los datos no salen del ambiente del cliente para generar embeddings. Diferenciador concreto vs. cualquier solución SaaS.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">DB propia (no vector DB de tercero)</div>
+      <div class="decision-cell">Sí. pgvector en PostgreSQL. Una sola tecnología de almacenamiento, control total, sin lock-in.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">Búsqueda híbrida</div>
+      <div class="decision-cell">Sí, prioridad inmediata. PostgreSQL nativo lo permite sin infraestructura adicional.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">Extracción automática de memoria</div>
+      <div class="decision-cell">Sí, pero no aún. Esperamos al primer cliente con volumen real de queries repetitivas. Construcción a demanda.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">Streaming de respuestas</div>
+      <div class="decision-cell">Sí, pronto. UX importa para la cerealera con Luciana en producción.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">MCP para auto-construcción de agentes</div>
+      <div class="decision-cell">No. La construcción de cada agente requiere conocimiento de dominio (clínico, comercial, contable). Es trabajo de consultoría experta, no de descripción en lenguaje natural.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">MCP propio read-only para operación</div>
+      <div class="decision-cell">Sí, en evaluación. Como lente de observación y sintonía sobre agentes ya en producción. Modificaciones se hacen por el camino normal: código, revisión, deploy.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">Router por complejidad (Haiku/Sonnet/Opus)</div>
+      <div class="decision-cell">Sí, valor inmediato en costos. Implementación straightforward.</div>
+    </div>
+    <div class="decision-row">
+      <div class="decision-cell">Multi-agente automatizado</div>
+      <div class="decision-cell">Sí, pero alineado a casos concretos. Dialectia validó el patrón; el siguiente paso es automatizarlo para P3 (informes ejecutivos).</div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h3>MCP read-only: el caso que sí tiene sentido</h3>
+
+    <p>Backboard vende su MCP como herramienta de creación. Es la angulación que mejor demostración visual da: "lo construí en una frase". Pero un agente en producción se crea una vez y se sintoniza cientos de veces. La creación es el evento; la operación es la vida del sistema.</p>
+
+    <p>Para un equipo chico como el nuestro operando varios agentes (laboratorio, cerealera, y los que vengan), un MCP propio que exponga las operaciones del <code>AgentService</code> en modo <em>solo lectura</em> resolvería un problema real: tener un panel de control conversacional sobre el estado de los agentes en producción, sin tener que abrir el admin panel ni hacer queries manuales a la DB cada vez que algo amerita revisión.</p>
+
+    <h4>Operaciones a exponer (todas read-only)</h4>
+
+    <div class="code-label">PHP · Operaciones del MCP de operación</div>
+<pre><span class="tok-com">// Inspección de configuración</span>
+get_assistant(id)              <span class="tok-com">// system prompt, modelo, tools, memoria</span>
+list_assistants(filters)       <span class="tok-com">// overview del account</span>
+list_documents(assistant_id)   <span class="tok-com">// qué hay indexado, cuándo, cuántos chunks</span>
+
+<span class="tok-com">// Inspección de actividad</span>
+get_thread_messages(thread_id) <span class="tok-com">// debugging de conversaciones</span>
+list_recent_threads(filters)   <span class="tok-com">// actividad reciente del agente</span>
+get_tool_call_history(thread)  <span class="tok-com">// qué tools se llamaron y con qué resultado</span>
+
+<span class="tok-com">// Diagnóstico</span>
+run_test_query(assistant, q)   <span class="tok-com">// query de prueba sin afectar producción</span>
+search_failed_queries(period)  <span class="tok-com">// queries que devolvieron errores o respuestas vacías</span>
+get_rag_retrieval(query, asst) <span class="tok-com">// qué chunks recupera el RAG para una query (debugging)</span></pre>
+
+    <h4>Flujo típico de sintonía</h4>
+
+    <div class="callout">
+      <div class="callout-label">Ejemplo de uso</div>
+      <p><strong>Vos en Claude Code, MCP de operación conectado:</strong></p>
+      <p style="font-family: var(--font-mono); font-size: 13px; background: var(--surface-elevated); padding: 12px; border-radius: 4px;">"Mostrame las últimas 10 queries que devolvieron respuestas muy cortas en el agente del laboratorio."</p>
+      <p>Claude consulta el MCP, identifica patrones (por ejemplo: todas son consultas con códigos de protocolo). Le pedís que pruebe una de esas queries contra el RAG para ver qué chunks recupera. Detectás que la búsqueda semántica no encuentra los códigos. Anotás: hay que activar búsqueda híbrida. <em>Las modificaciones reales se hacen en código, no por el MCP.</em></p>
+    </div>
+
+    <h4>Por qué read-only es la postura correcta</h4>
+
+    <p>Dar write access a un MCP sobre una DB de producción es darle a Claude — y a quien tenga acceso al cliente — capacidad de modificar el comportamiento de agentes que atienden clientes reales. Para un caso de consumo (un developer experimentando con su propia app), el riesgo es acotado. Para nuestros clientes en sectores regulados, no.</p>
+
+    <p>Los cambios sobre prompts, tools, modelos, o cualquier configuración de un agente siguen el camino normal: branch, PR, revisión, deploy. El MCP nos da visibilidad y diagnóstico; la modificación está fuera de su alcance. Es la misma disciplina que aplicamos para cualquier cambio en producción.</p>
+
+    <p class="muted">Nota práctica: implementar el MCP es relativamente barato (las 8 operaciones de arriba son endpoints HTTP envueltos en formato MCP). El valor aparece cuando empieza a haber suficiente actividad como para que el debugging manual sea fricción. Hoy con dos clientes y volumen bajo, no es urgente. Cuando el laboratorio entre en producción real, va a empezar a ser útil.</p>
+  </div>
+</section>
+<section id="prioridades" class="section">
+  <div class="section-header">
+    <div class="section-num">PRIORIDADES</div>
+    <h2>Qué priorizamos</h2>
+    <p class="section-subtitle">Ordenado por impacto en clientes actuales / esfuerzo</p>
+  </div>
+
+  <div class="prose">
+    <p>De los 21 gaps mapeados, no todos pesan igual. Una priorización honesta:</p>
+
+    <h3>Tier 1 — Cerramos este trimestre</h3>
+    <ul style="margin: 0 0 1.5rem; padding-left: 1.5rem; line-height: 1.8;">
+      <li><strong>Búsqueda híbrida</strong> (item 29). 1 semana. Impacto directo en calidad del laboratorio.</li>
+      <li><strong>Two-tier document scoping</strong> (item 31). 1 día. Habilita casos de uso por-usuario en cerealera.</li>
+      <li><strong>Manejo de overflow de contexto</strong> (items 18-19). 2-3 días. Deuda técnica con vencimiento cercano.</li>
+      <li><strong>Router por complejidad de tarea</strong> (item 25). 1 día. Ahorro de costos inmediato a volumen.</li>
+    </ul>
+
+    <h3>Tier 2 — Próximos 2-3 meses</h3>
+    <ul style="margin: 0 0 1.5rem; padding-left: 1.5rem; line-height: 1.8;">
+      <li><strong>Streaming de respuestas</strong> (item 40). UX para Luciana en producción.</li>
+      <li><strong>Pipeline de extracción de memoria</strong> (items 8, 9, 15). Aparece cuando el volumen lo justifica.</li>
+      <li><strong>Tools paralelas</strong> (item 39). Optimización de wall-clock para queries complejas.</li>
+    </ul>
+
+    <h3>Tier 3 — Cuando lo pida un caso de uso</h3>
+    <ul style="margin: 0 0 1.5rem; padding-left: 1.5rem; line-height: 1.8;">
+      <li><strong>Multi-agente automatizado</strong> (items 44-49). Para P3 (informes ejecutivos).</li>
+      <li><strong>Búsqueda web</strong> (items 41-43). Para casos que la requieran explícitamente.</li>
+      <li><strong>MCP propio read-only para operación</strong>. Cuando el volumen de actividad haga que el debugging manual sea fricción. Hoy no es urgente; con el laboratorio en producción real va a empezar a justificarse.</li>
+    </ul>
+
+    <h3>No vamos a hacer</h3>
+    <ul style="margin: 0 0 1.5rem; padding-left: 1.5rem; line-height: 1.8;">
+      <li>Multi-proveedor de modelos (items 22-23, 26-27). Decisión de producto.</li>
+      <li>Auto-construcción de agentes por lenguaje natural vía MCP (item 50). Es el modelo de Backboard; el nuestro es implementación experta.</li>
+      <li>Write access vía MCP a producción. Las modificaciones de prompts, tools o configs van por el camino normal (código, revisión, deploy). El MCP nos da observación, no modificación.</li>
+    </ul>
+  </div>
+
+  <div class="closing">
+    <p>Documento vivo. Cualquier item se puede mover de tier según necesidades de clientes. Revisar trimestralmente o cuando entre un cliente nuevo cuyo caso de uso cambie las prioridades.</p>
+    <p style="margin-top: 1rem;">Última actualización: junio 2026 · Autor: Leandro + Claude · v1</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+// Items data
+const ITEMS = {
+  estado: [
+    {id:1, name:"Conversación persistente entre sesiones", status:"progreso", note:"AgentService guarda historial en PostgreSQL. Falta consolidar el ciclo completo de reanudar sesiones viejas como flujo de UX."},
+    {id:2, name:"Retomar exactamente donde se dejó", status:"progreso", note:"La persistencia por thread_id lo habilita. Falta el flujo end-to-end para que el usuario retome sin re-explicar."},
+    {id:3, name:"Thread aislado por usuario", status:"progreso", note:"El diseño multi-tenant está en la arquitectura Phase 02. En implementación activa."},
+    {id:4, name:"Threads ilimitados por asistente", status:"tenes", note:"Sin límite arbitrario: PostgreSQL escala, Cloud Run maneja la carga. Controlás el ciclo de vida completo."},
+    {id:5, name:"Metadatos en threads (user_id, plan, canal)", status:"tenes", note:"Columnas libres vía JSONB en la tabla de threads. Cerealera vs. laboratorio se distinguen en la misma instancia."},
+    {id:6, name:"Historial estructurado recuperable por API", status:"tenes", note:"Query directa a PostgreSQL. El historial es tuyo, sin intermediarios, auditable y exportable."},
+    {id:7, name:"Threads vivos hasta borrado explícito", status:"tenes", note:"Control total del ciclo de vida. Nada se borra sin que lo ordenes. Crítico para auditoría en sectores regulados."},
+  ],
+  memoria: [
+    {id:8, name:"Recordar preferencias entre sesiones", status:"gap", note:"No hay extracción automática. El contexto muere con el thread. Requiere pipeline completo: detectar → extraer → guardar → recuperar."},
+    {id:9, name:"Auto-extraer hechos de conversaciones", status:"gap", note:"No existe extractor automático. Que el agente recuerde que el Dr. X prefiere unidades SI requeriría construirlo explícitamente."},
+    {id:10, name:"Recuperar memorias relevantes automáticamente", status:"gap", note:"BGE-M3 + pgvector están para RAG de documentos, no para store de hechos sobre el usuario con recuperación automática entre sesiones."},
+    {id:11, name:"Pre-cargar datos del usuario antes del primer mensaje", status:"tenes", note:"Desde el system prompt podés inyectar datos del CRM, historial de cuenta, perfil del paciente. Práctica ya común en nuestros prompts."},
+    {id:12, name:"Búsqueda semántica sobre lo aprendido del usuario", status:"tenes", note:"Infraestructura lista (BGE-M3 + pgvector). Si se construye el store de memorias, la búsqueda es trivial."},
+    {id:13, name:"Memoria en modo solo-lectura", status:"progreso", note:"Es un parámetro de comportamiento en el AgentService. No requiere infraestructura nueva, solo lógica de modo."},
+    {id:14, name:"CRUD completo sobre memorias", status:"progreso", note:"Si se construye el store, el CRUD viene gratis con Laravel. Falta schema y endpoint."},
+    {id:15, name:"Extracción configurable por asistente", status:"gap", note:"No hay extracción con prompts configurables por asistente. Cerealera necesita señales de cuenta; laboratorio, contexto clínico. Hay que construirlo."},
+    {id:16, name:"Extracción de alta precisión", status:"noaplica", note:"La distinción Lite/Pro es específica del producto Backboard. En tu stack, la precisión se controla con elección de modelo y prompt."},
+    {id:17, name:"Memoria compartida entre threads del usuario", status:"gap", note:"Hoy cada thread es independiente. Un store centralizado por usuario es componente a construir."},
+  ],
+  contexto: [
+    {id:18, name:"Manejo automático al exceder context window", status:"gap", note:"Si una conversación supera el límite, falla. Requiere lógica de truncación, compresión o resumen automático."},
+    {id:19, name:"Sin conteo manual de tokens", status:"gap", note:"Hoy se asume que no se supera. Para conversaciones largas en el laboratorio va a importar."},
+    {id:20, name:"Cambiar de modelo sin recalcular contexto", status:"gap", note:"Single provider por ahora. Si se mezclan modelos, manejo de contexto cruzado habría que construirlo."},
+    {id:21, name:"Chunking automático al cambiar modelo", status:"noaplica", note:"BGE-M3 es fijo. El chunking no depende del modelo de inferencia en nuestra arquitectura."},
+  ],
+  routing: [
+    {id:22, name:"Acceso a 17.000+ modelos", status:"noaplica", note:"Por diseño, no aplica. Tus clientes en sectores regulados no aceptarían datos pasando por proxy de terceros."},
+    {id:23, name:"Cambiar de modelo sin perder estado", status:"gap", note:"Solo Anthropic. Si en el futuro se necesita routing entre proveedores, el AgentService debería manejar context handoff."},
+    {id:24, name:"Modelos distintos por mensaje en el mismo thread", status:"gap", note:"Posible: controlás cada llamada. Falta la lógica de decisión de cuándo usar cuál."},
+    {id:25, name:"Rutear queries baratas a modelos baratos", status:"gap", note:"Haiku para clasificación, Sonnet para razonamiento, Opus para síntesis. No implementado, el AgentService es el lugar natural."},
+    {id:26, name:"Fallback automático entre proveedores", status:"gap", note:"Single provider = si Anthropic cae, el servicio cae. Continuidad operativa para clientes críticos puede pedirlo."},
+    {id:27, name:"Catálogo de modelos consultable", status:"noaplica", note:"No necesitás catálogo de 17.000. Usás los modelos validados de Anthropic. La amplitud no es objetivo."},
+  ],
+  rag: [
+    {id:28, name:"Documento subido y consultable en minutos", status:"tenes", note:"pdfplumber + BGE-M3 + pgvector funcionando (743 PDFs indexados). Infraestructura propia en Docker/GCP."},
+    {id:29, name:"Búsqueda híbrida semántica + keyword", status:"progreso", note:"Semántica sí. Keyword/BM25 con ts_rank disponible pero no integrado al pipeline. Necesario para códigos, IDs, nombres exactos."},
+    {id:30, name:"Tipos de documento mixtos en la misma base", status:"progreso", note:"PDFs sí. Roadmap incluye informes estructurados y CSVs. Pipeline extensible."},
+    {id:31, name:"Documento con alcance de un solo thread", status:"gap", note:"Hoy los documentos son globales por asistente. Falta el thread-level scoping. Cambio trivial (1 columna + filtro)."},
+    {id:32, name:"Embedding model propio por asistente", status:"tenes", note:"BGE-M3 local, sin API externa, sin costo por llamada, sin datos que salen. Ventaja directa frente a Backboard."},
+    {id:33, name:"Cuántos chunks recuperar por query (tok_k)", status:"tenes", note:"Parámetro configurable en el pipeline. 5 para soporte rápido, 40 para síntesis de investigación."},
+    {id:34, name:"Indexar archivos de código junto a prosa", status:"progreso", note:"El pipeline trata código como texto plano. No requiere infraestructura nueva, solo aplicación."},
+    {id:35, name:"Estado de indexación, chunks, tokens", status:"tenes", note:"Control total. Consultás directamente la DB. No dependés de un tercero para saber qué pasó con tus datos."},
+  ],
+  tools: [
+    {id:36, name:"Resultados de tools en historial persistente", status:"progreso", note:"AgentService diseñado para esto. Cada resultado se guarda en el thread. En implementación activa."},
+    {id:37, name:"Encadenar rondas de tool calls sin reconstruir estado", status:"progreso", note:"El loop maneja múltiples rondas con estado en PostgreSQL. Núcleo de Phase 02."},
+    {id:38, name:"Loop de tool calls hasta completado", status:"progreso", note:"Patrón implementado: tool_use → ejecutar → tool_result → repetir hasta end_turn. En testing."},
+    {id:39, name:"Múltiples tools en paralelo", status:"gap", note:"Hoy el loop es secuencial. Paralelismo requiere concurrencia (Horizon + Redis es el camino natural)."},
+    {id:40, name:"Streaming después de tools", status:"gap", note:"No hay streaming implementado. La API lo soporta via SSE; falta integrarlo en el AgentService. UX para Luciana."},
+  ],
+  web: [
+    {id:41, name:"Acceso web en tiempo real", status:"gap", note:"No implementado. Casos actuales son de datos internos. Si se necesita, se agrega como tool."},
+    {id:42, name:"El agente decide cuándo buscar vs. usar conocimiento", status:"gap", note:"Ligado al anterior. El modelo decide si se le da la tool con descripción adecuada."},
+    {id:43, name:"Web + memoria + streaming en una llamada", status:"gap", note:"Requiere los tres componentes. Por ahora fuera del alcance de verticales prioritarias."},
+  ],
+  agentes: [
+    {id:44, name:"Threads paralelos con síntesis", status:"gap", note:"No automatizado. Dialectia fue manual. Automatizar requiere orquestación de threads concurrentes."},
+    {id:45, name:"Redes de especialistas + coordinador", status:"progreso", note:"Arquitectura diseñada. Dialectia como prueba de concepto. Implementación automática es paso siguiente."},
+    {id:46, name:"Modelo distinto por agente", status:"gap", note:"Single provider. Combinado con routing por complejidad, cada agente podría usar Haiku/Sonnet/Opus según rol."},
+    {id:47, name:"System prompt distinto por agente", status:"tenes", note:"Cada asistente tiene su system prompt. Ya diferenciás agente del laboratorio del de la cerealera."},
+    {id:48, name:"Tool calling distinto por agente", status:"progreso", note:"Estructura de tools por asistente está en el diseño. En implementación."},
+    {id:49, name:"Memoria compartida entre agentes", status:"gap", note:"Si existe el store centralizado (item 17), los agentes pueden consultarlo. Por ahora cada uno tiene solo su propio thread."},
+    {id:50, name:"Construir arquitectura por lenguaje natural", status:"noaplica", note:"Producto Backboard via MCP + Claude Code. No es nuestro modelo: somos implementación experta, no auto-servicio."},
+  ],
+};
+
+const STATUS_LABEL = {tenes: "Tenemos", progreso: "En progreso", gap: "Gap", noaplica: "No aplica"};
+
+// Render items
+function renderSection(sectionKey) {
+  const matrixEl = document.getElementById(`matrix-${sectionKey}`);
+  const itemsEl = document.getElementById(`items-${sectionKey}`);
+  const items = ITEMS[sectionKey];
+
+  matrixEl.innerHTML = items.map(item =>
+    `<div class="matrix-cell ${item.status}" title="${item.id}. ${item.name}" onclick="document.getElementById('item-${item.id}').scrollIntoView({behavior:'smooth',block:'center'})">${item.id}</div>`
+  ).join('');
+
+  itemsEl.innerHTML = items.map(item => `
+    <div class="item" id="item-${item.id}">
+      <div class="item-num">${String(item.id).padStart(2,'0')}</div>
+      <div class="item-body">
+        <div class="item-name">${item.name}</div>
+        <div class="item-note">${item.note}</div>
+      </div>
+      <span class="badge badge-${item.status}">${STATUS_LABEL[item.status]}</span>
+    </div>
+  `).join('');
+}
+
+Object.keys(ITEMS).forEach(renderSection);
+
+// Global matrix overview
+function renderGlobalMatrix() {
+  const sectionLabels = {
+    estado: 'Estado',
+    memoria: 'Memoria',
+    contexto: 'Contexto',
+    routing: 'Routing',
+    rag: 'RAG',
+    tools: 'Tools',
+    web: 'Web',
+    agentes: 'Agentes',
+  };
+  const container = document.getElementById('global-matrix');
+  container.innerHTML = Object.keys(ITEMS).map(sectionKey => {
+    const items = ITEMS[sectionKey];
+    const cells = items.map(item =>
+      `<a href="#item-${item.id}" class="global-cell ${item.status}" title="${item.id}. ${item.name} — ${STATUS_LABEL[item.status]}">${item.id}</a>`
+    ).join('');
+    return `<div class="global-matrix-row">
+      <div class="global-matrix-row-label">${sectionLabels[sectionKey]}</div>
+      <div class="global-matrix-cells">${cells}</div>
+    </div>`;
+  }).join('');
+}
+renderGlobalMatrix();
+
+// Sidebar active link tracking
+const sections = document.querySelectorAll('section[id]');
+const sidebarLinks = document.querySelectorAll('.sidebar a');
+
+function updateActiveLink() {
+  let current = '';
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= 120 && rect.bottom >= 120) {
+      current = section.id;
+    }
+  });
+  sidebarLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+  });
+}
+
+window.addEventListener('scroll', updateActiveLink, {passive: true});
+updateActiveLink();
+</script>
+
+</body>
+</html>
